@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# planning docs
+plans/*.md
+SKILL.md
+AUDIT.md
+animation-SKILL.md
+PLAN-TEMPLATE.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

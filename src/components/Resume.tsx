@@ -135,8 +135,9 @@ export default function Resume() {
                 px-6 py-4
                 font-medium
                 text-black
-                transition
-                hover:scale-[1.02]
+                press-scale
+                transition-transform
+                hover:bg-emerald-400
               "
             >
               <Download className="h-5 w-5" />
@@ -150,7 +151,8 @@ export default function Resume() {
                 rounded-2xl
                 border
                 px-6 py-4
-                transition
+                press-scale
+                transition-colors
 
                 border-zinc-300
                 hover:border-emerald-500

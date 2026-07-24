@@ -7,9 +7,20 @@
 @custom-variant forest (&:where(.forest, .forest *));
 
 html {
+  font-family: var(--font-inter), system-ui, sans-serif;
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    background-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
+}
+
+/* SKILL.md §15: Size-specific tracking — tighten large text, leave body near 0 */
+:root {
+  --tracking-display: -0.02em;
+  --tracking-heading: -0.01em;
+  --tracking-body: 0em;
+  --tracking-label: 0.1em;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 body {
@@ -104,4 +115,78 @@ html.forest .hover\:border-emerald-500\/30:hover {
 
 html.forest .hover\:bg-emerald-500\/30:hover {
   background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Gated press feedback — only on devices with fine pointer + hover */
+@media (hover: hover) and (pointer: fine) {
+  .press-scale {
+    transition: transform 150ms var(--ease-out);
+  }
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* SKILL.md §14: Reduced motion — cross-fade, no transforms */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* SKILL.md §14: Reduced transparency — solid backgrounds */
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-lg {
+    backdrop-filter: none !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  :where(.dark) .backdrop-blur-xl,
+  :where(.dark) .backdrop-blur-2xl,
+  :where(.dark) .backdrop-blur-lg {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+  }
+
+  :where(.forest) .backdrop-blur-xl,
+  :where(.forest) .backdrop-blur-2xl,
+  :where(.forest) .backdrop-blur-lg {
+    background-color: rgba(238, 247, 241, 0.95) !important;
+  }
+}
+
+/* SKILL.md §14: High contrast — solid backgrounds with defined borders */
+@media (prefers-contrast: more) {
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-lg {
+    backdrop-filter: none !important;
+  }
+
+  :where(.dark) .backdrop-blur-xl,
+  :where(.dark) .backdrop-blur-2xl,
+  :where(.dark) .backdrop-blur-lg {
+    background-color: #18181b !important;
+    border: 1px solid #3f3f46 !important;
+  }
+
+  :where(.forest) .backdrop-blur-xl,
+  :where(.forest) .backdrop-blur-2xl,
+  :where(.forest) .backdrop-blur-lg {
+    background-color: #e8f5e9 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  }
 }

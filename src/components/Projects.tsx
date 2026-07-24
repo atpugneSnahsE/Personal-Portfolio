@@ -60,13 +60,12 @@ export default async function Projects() {
                   rounded-2xl sm:rounded-[2rem]
                   border
                   p-5 sm:p-6 md:p-8
-                  transition-all
-                  duration-500
+                  transition-colors
                   will-change-transform
 
                   border-zinc-200
                   bg-white/70
-                  hover:-translate-y-3
+                  press-scale
                   hover:border-emerald-500/40
                   hover:shadow-2xl
 
@@ -161,8 +160,8 @@ export default async function Projects() {
                       text-sm
                       font-medium
                       text-black
-                      transition
-                      hover:scale-105
+                      press-scale
+                      transition-transform
                     "
                   >
                     GitHub
@@ -178,7 +177,8 @@ export default async function Projects() {
                         border
                         px-5 py-3
                         text-sm
-                        transition
+                        press-scale
+                        transition-colors
 
                         border-zinc-300
                         hover:border-emerald-500

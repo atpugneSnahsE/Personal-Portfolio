@@ -28,15 +28,14 @@ export default function FadeIn({
       }}
       viewport={{
         once: true,
-        // amount: 0 means trigger as soon as ANY pixel enters the viewport,
-        // which fixes the bug where sections already on screen never animate.
         amount: 0,
         margin: "0px 0px -60px 0px",
       }}
       transition={{
-        duration: shouldReduce ? 0 : 0.7,
+        type: "spring",
+        bounce: 0,
+        duration: shouldReduce ? 0 : 0.6,
         delay: shouldReduce ? 0 : delay,
-        ease: "easeOut",
       }}
     >
       {children}

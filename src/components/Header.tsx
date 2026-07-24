@@ -11,11 +11,11 @@ export default function Header() {
         border-zinc-200/40
         bg-white/70
         backdrop-blur-2xl
-        transition-all
-        duration-300
         dark:border-zinc-900/50
         dark:bg-black/40
+        animate-[slideDown_0.5s_var(--ease-out)_both]
       "
+      style={{ borderTop: "1px solid rgba(255, 255, 255, 0.4)" }}
     >
       <div className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-6 md:px-8">
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 
 const lerp = (current: number, target: number, factor: number) =>
@@ -13,8 +13,8 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
   const rafId = useRef<number | null>(null);
   const touchState = useRef({ lastY: 0 });
   const animateRef = useRef<() => void>(() => {});
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const shouldReduce = useReducedMotion();
-  const [progress, setProgress] = useState(0);
 
   function getMax() {
     if (!contentRef.current) return 0;
@@ -46,7 +46,10 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
         contentRef.current.style.transform = `translate3d(0, ${-currentY.current}px, 0)`;
       }
 
-      setProgress(max > 0 ? currentY.current / max : 0);
+      if (progressBarRef.current) {
+        const pct = max > 0 ? currentY.current / max : 0;
+        progressBarRef.current.style.height = `${Math.max(4, pct * 100)}%`;
+      }
 
       if (rafId.current !== null) {
         rafId.current = requestAnimationFrame(animateRef.current);
@@ -164,8 +167,9 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
           style={{ backgroundColor: "rgba(0,0,0,0.12)" }}
         >
           <div
-            className="w-full rounded-full bg-emerald-500 transition-all duration-150"
-            style={{ height: `${Math.max(4, progress * 100)}%` }}
+            ref={progressBarRef}
+            className="w-full rounded-full bg-emerald-500 transition-[height] duration-150"
+            style={{ height: "0%" }}
           />
         </div>
       )}

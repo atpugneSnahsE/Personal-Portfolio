@@ -77,11 +77,11 @@ function TimelineCard({
       className="
         rounded-2xl sm:rounded-[2rem]
         border p-5 sm:p-7
-        transition-all duration-500
+        transition-colors
 
         border-zinc-200
         bg-zinc-100
-        hover:-translate-y-2
+        press-scale
         hover:border-emerald-400
         hover:shadow-xl
 

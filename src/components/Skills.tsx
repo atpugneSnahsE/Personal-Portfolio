@@ -97,12 +97,10 @@ export default function Skills() {
                   border
                   p-6 sm:p-8
                   backdrop-blur-xl
-                  transition-all
-                  duration-500
+                  transition-colors
 
                   border-zinc-200
                   bg-white/60
-                  hover:-translate-y-2
                   hover:border-emerald-500/30
                   hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]
 
@@ -137,13 +135,12 @@ export default function Skills() {
                           px-4
                           py-2
                           text-sm
-                          transition-all
-                          duration-300
+                          transition-colors
 
                           border-zinc-300
                           bg-white/80
                           text-zinc-700
-                          hover:scale-105
+                          press-scale
                           hover:border-emerald-500
                           hover:text-emerald-600
 

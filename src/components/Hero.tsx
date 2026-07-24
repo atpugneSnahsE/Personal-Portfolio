@@ -50,7 +50,7 @@ export default function Hero() {
                 text-4xl sm:text-5xl md:text-7xl
                 font-bold
                 leading-tight sm:leading-[0.95]
-                tracking-tight
+                tracking-[var(--tracking-display)]
                 text-zinc-900
                 dark:text-white
               "
@@ -88,9 +88,8 @@ export default function Hero() {
                   px-6
                   py-5
                   backdrop-blur-xl
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
+                  press-scale
+                  transition-transform
                   hover:border-emerald-500/30
                   dark:border-zinc-800
                   dark:bg-zinc-900/70
@@ -114,9 +113,8 @@ export default function Hero() {
                   px-6
                   py-5
                   backdrop-blur-xl
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
+                  press-scale
+                  transition-transform
                   hover:border-emerald-500/30
                   dark:border-zinc-800
                   dark:bg-zinc-900/70
@@ -140,9 +138,8 @@ export default function Hero() {
                   px-6
                   py-5
                   backdrop-blur-xl
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
+                  press-scale
+                  transition-transform
                   hover:border-emerald-500/30
                   dark:border-zinc-800
                   dark:bg-zinc-900/70
@@ -169,9 +166,8 @@ export default function Hero() {
                   py-4
                   font-medium
                   text-black
-                  transition-all
-                  duration-300
-                  hover:scale-105
+                  press-scale
+                  transition-transform
                   hover:shadow-[0_0_40px_rgba(16,185,129,0.25)]
                   cursor-pointer
                 "
@@ -188,8 +184,8 @@ export default function Hero() {
                   px-7
                   py-4
                   font-medium
-                  transition-all
-                  duration-300
+                  press-scale
+                  transition-colors
                   hover:border-emerald-500
                   hover:text-emerald-500
                   dark:border-zinc-700

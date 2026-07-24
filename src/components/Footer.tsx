@@ -163,11 +163,6 @@ export default function Footer() {
 
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet"
-      />
       <footer
         className={`relative w-full overflow-hidden border-t py-5 transition-colors duration-300 ${s.border} ${mounted ? s.bg : "bg-zinc-950"}`}
       >
@@ -202,7 +197,7 @@ export default function Footer() {
               </span>
             </div>
 
-            <div className="min-h-[3.25rem] px-4 py-2 font-mono text-sm leading-relaxed flex flex-col justify-center">
+            <div className="min-h-[3.25rem] px-4 py-2 text-sm leading-relaxed flex flex-col justify-center" style={{ fontFamily: "var(--font-mono), monospace" }}>
               <div className="flex items-baseline gap-2">
                 <span
                   className={`shrink-0 select-none font-medium ${s.prompt}`}
@@ -226,7 +221,7 @@ export default function Footer() {
           </div>
 
           <div className="mt-2 flex justify-end">
-            <p className={`font-mono text-[10px] tracking-wider ${s.text}`}>
+            <p className={`text-[10px] tracking-wider ${s.text}`} style={{ fontFamily: "var(--font-mono), monospace" }}>
               built with{" "}
               <span className="motion-safe:animate-pulse text-rose-400">
                 &lt;3

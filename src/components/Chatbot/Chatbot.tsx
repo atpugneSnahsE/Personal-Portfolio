@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Bot, X } from "lucide-react";
 import ChatWindow from "./ChatWindow";
 
@@ -29,9 +30,8 @@ export default function Chatbot() {
           bg-emerald-500
           text-black
           shadow-2xl
-          transition-all
-          duration-300
-          hover:scale-110
+          press-scale
+          cursor-pointer
         "
       >
         {open ? (
@@ -42,18 +42,24 @@ export default function Chatbot() {
       </button>
 
       {/* Window */}
-      {open && (
-        <div
-          className="
-            fixed
-            bottom-28
-            right-8
-            z-[9999]
-          "
-        >
-          <ChatWindow />
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ type: "spring", bounce: 0, duration: 0.35 }}
+            className="
+              fixed
+              bottom-28
+              right-8
+              z-[9999]
+            "
+          >
+            <ChatWindow />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

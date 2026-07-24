@@ -52,7 +52,8 @@ export default function Contact() {
               className="
                 flex items-center gap-4
                 rounded-2xl border p-5
-                transition-all duration-300
+                press-scale
+                transition-colors
                 hover:border-emerald-500/40
 
                 border-zinc-200
@@ -77,7 +78,8 @@ export default function Contact() {
               className="
                 flex items-center gap-4
                 rounded-2xl border p-5
-                transition-all duration-300
+                press-scale
+                transition-colors
                 hover:border-emerald-500/40
 
                 border-zinc-200
@@ -144,7 +146,7 @@ export default function Contact() {
             <a
               href="https://linkedin.com/in/eshansengupta"
               target="_blank"
-              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition hover:border-emerald-500 dark:border-zinc-800"
+              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition-colors press-scale hover:border-emerald-500 dark:border-zinc-800"
             >
               <FaLinkedinIn className="mb-3 h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
               <p className="font-medium text-sm sm:text-base dark:text-white break-words">
@@ -155,7 +157,7 @@ export default function Contact() {
             <a
               href="https://github.com/atpugneSnahsE"
               target="_blank"
-              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition hover:border-emerald-500 dark:border-zinc-800"
+              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition-colors press-scale hover:border-emerald-500 dark:border-zinc-800"
             >
               <FaGithub className="mb-3 h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
               <p className="font-medium text-sm sm:text-base dark:text-white break-words">
@@ -166,7 +168,7 @@ export default function Contact() {
             <a
               href="https://orcid.org/0000-0002-6285-7654"
               target="_blank"
-              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition hover:border-emerald-500 dark:border-zinc-800"
+              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition-colors press-scale hover:border-emerald-500 dark:border-zinc-800"
             >
               <FileText className="mb-3 h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
               <p className="font-medium text-sm sm:text-base dark:text-white break-words">
@@ -177,7 +179,7 @@ export default function Contact() {
             <a
               href="https://twitter.com/_eshansengupta"
               target="_blank"
-              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition hover:border-emerald-500 dark:border-zinc-800"
+              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition-colors press-scale hover:border-emerald-500 dark:border-zinc-800"
             >
               <FaXTwitter className="mb-3 h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
               <p className="font-medium text-sm sm:text-base dark:text-white break-words">
@@ -188,7 +190,7 @@ export default function Contact() {
             <a
               href="https://instagram.com/eshansengupta.me"
               target="_blank"
-              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition hover:border-emerald-500 dark:border-zinc-800"
+              className="group rounded-2xl border border-zinc-200 p-4 sm:p-5 transition-colors press-scale hover:border-emerald-500 dark:border-zinc-800"
             >
               <FaInstagram className="mb-3 h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" />
               <p className="font-medium text-sm sm:text-base dark:text-white break-words">

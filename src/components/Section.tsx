@@ -28,7 +28,7 @@ export default function Section({
             className="
               text-3xl
               font-bold
-              tracking-tight
+              tracking-[var(--tracking-heading)]
               text-zinc-900
               dark:text-white
               md:text-5xl

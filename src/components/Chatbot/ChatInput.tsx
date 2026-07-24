@@ -79,8 +79,9 @@ export default function ChatInput({
             rounded-xl
             bg-emerald-500
             text-black
-            transition
-            hover:scale-105
+            active:scale-97
+            transition-transform
+            duration-150
             disabled:cursor-not-allowed
             disabled:opacity-50
           "

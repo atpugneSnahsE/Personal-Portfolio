@@ -305,7 +305,7 @@ function InfoPanel({
 
   return (
     <div
-      className={`pointer-events-auto absolute right-4 sm:right-6 top-6 z-20 w-[calc(100vw-32px)] sm:w-72 rounded-xl border p-5 backdrop-blur-lg transition-all duration-300 ${
+      className={`pointer-events-auto absolute right-4 sm:right-6 top-6 z-20 w-[calc(100vw-32px)] sm:w-72 rounded-xl border p-5 backdrop-blur-lg transition-colors duration-200 ${
         forest
           ? "border-emerald-200/60 bg-white/90"
           : "border-zinc-700/50 bg-zinc-950/90"
