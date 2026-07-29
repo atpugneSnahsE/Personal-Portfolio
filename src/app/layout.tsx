@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Cinzel } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/ThemeProvider";
 import ForestBackground from "@/components/ForestBackground";
@@ -22,6 +22,12 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+});
+
 export const metadata: Metadata = {
   title: "Eshan Sengupta",
   description:
@@ -37,8 +43,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${cinzel.variable}`}>
+      <body suppressHydrationWarning>
         <Providers>
           <LoadingScreen>
             <ForestBackground />

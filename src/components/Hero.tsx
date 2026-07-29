@@ -78,15 +78,15 @@ export default function Hero() {
             </p>
 
             {/* credibility row */}
-            <div className="mb-10 flex flex-wrap gap-4">
+            <div className="mb-8 sm:mb-10 flex flex-wrap gap-3 sm:gap-4">
               <div
                 className="
-                  rounded-[2rem]
+                  rounded-[1.5rem] sm:rounded-[2rem]
                   border
                   border-zinc-200
                   bg-zinc-100/70
-                  px-6
-                  py-5
+                  px-4 sm:px-6
+                  py-3 sm:py-5
                   backdrop-blur-xl
                   press-scale
                   transition-transform
@@ -95,23 +95,23 @@ export default function Hero() {
                   dark:bg-zinc-900/70
                 "
               >
-                <p className="text-3xl font-bold text-emerald-500">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-500">
                   14+
                 </p>
 
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
                   Publications
                 </p>
               </div>
 
               <div
                 className="
-                  rounded-[2rem]
+                  rounded-[1.5rem] sm:rounded-[2rem]
                   border
                   border-zinc-200
                   bg-zinc-100/70
-                  px-6
-                  py-5
+                  px-4 sm:px-6
+                  py-3 sm:py-5
                   backdrop-blur-xl
                   press-scale
                   transition-transform
@@ -120,23 +120,23 @@ export default function Hero() {
                   dark:bg-zinc-900/70
                 "
               >
-                <p className="text-3xl font-bold text-emerald-500">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-500">
                   14
                 </p>
 
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
                   Research Papers
                 </p>
               </div>
 
               <div
                 className="
-                  rounded-[2rem]
+                  rounded-[1.5rem] sm:rounded-[2rem]
                   border
                   border-zinc-200
                   bg-zinc-100/70
-                  px-6
-                  py-5
+                  px-4 sm:px-6
+                  py-3 sm:py-5
                   backdrop-blur-xl
                   press-scale
                   transition-transform
@@ -145,11 +145,11 @@ export default function Hero() {
                   dark:bg-zinc-900/70
                 "
               >
-                <p className="text-3xl font-bold text-emerald-500">
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-500">
                   AI
                 </p>
 
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
                   Research Focus
                 </p>
               </div>
@@ -200,7 +200,7 @@ export default function Hero() {
 
         {/* RIGHT */}
         <FadeIn delay={0.2} y={50}>
-          <div className="flex h-full min-h-[350px] md:min-h-[500px] lg:min-h-[600px] items-center justify-center">
+          <div className="flex h-full min-h-[200px] sm:min-h-[350px] md:min-h-[500px] lg:min-h-[600px] items-center justify-center">
             <VesselCanvas />
           </div>
         </FadeIn>

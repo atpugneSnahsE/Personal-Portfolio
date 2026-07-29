@@ -1,72 +1,82 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
-/* ── ASCII art assets ──────────────────────────────────────────────── */
+/* ── design tokens ─────────────────────────────────────────────────────
+   A small world spinning into view, warmed by a low light on the horizon.
+   Cool slate/teal globe (ocean → land → ice) against a near-black void,
+   a single warm amber accent standing in for the light source itself.
+------------------------------------------------------------------------- */
 
-const HAPPY_MAC = [
-  "        .-\"\"\"\"\"\"\"-.        ",
-  "       /            \\       ",
-  "      |   O      O   |      ",
-  "      |      <>      |      ",
-  "      |    \\____/    |      ",
-  "       \\            /       ",
-  "        '-........-'        ",
+const COLORS = {
+  bg: "#040509",
+  oceanDim: "#0e2a3d",
+  oceanMid: "#1c5f79",
+  landDim: "#2c5f3f",
+  landMid: "#6fb87a",
+  landBright: "#d8f0cf",
+  ice: "#eef6ff",
+  accent: "#f2a65a",
+  textDim: "#5b6472",
+};
+
+const STATUS_MESSAGES = [
+  "Charting coastlines",
+  "Raising terrain",
+  "Spinning up the core",
+  "Aligning the orbit",
+  "Catching the light",
 ];
 
-const BOOT_LOGO = [
-  "  ╔══════════════════════════════════════════╗",
-  "  ║           E S H A N   S Y S T E M S     ║",
-  "  ║              v2.0.4 — 2026              ║",
-  "  ╚══════════════════════════════════════════╝",
-];
+const NAME = "ESHAN SENGUPTA";
+const ROLE = "ML Engineer  ·  Researcher  ·  Builder";
 
-const MEMORY_CHECK_LINES = [
-  "APPLE ][' ROM CHECK ...................... OK",
-  "EXTENDED MEMORY: 16384K ................. OK",
-  "NEURAL PROCESSOR ................. DETECTED",
-  "QUANTUM CORE v3.1 ................ ONLINE",
-];
+/* ── globe geometry ────────────────────────────────────────────────────
+   Points evenly distributed on a unit sphere (fibonacci spiral), each
+   given a fixed "elevation" from layered sine waves so continents hold
+   their shape as the sphere spins — no external assets, no libraries.
+------------------------------------------------------------------------- */
 
-const BOOT_LINES = [
-  { text: "> Loading neural network weights...", delay: 60 },
-  { text: "> Initializing quantum core...", delay: 50 },
-  { text: "> Calibrating retro encabulator...", delay: 55 },
-  { text: "> Establishing secure channel...", delay: 45 },
-  { text: "> All systems nominal.", delay: 40 },
-];
+type SpherePoint = { x: number; y: number; z: number; land: boolean; ice: boolean; edge: boolean };
 
-const REVEAL_LINES = [
-  "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-  "",
-  "          E S H A N   S E N G U P T A",
-  "",
-  "   ML Engineer  ·  Researcher  ·  Builder",
-  "",
-  "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-];
+function buildSphere(count: number): SpherePoint[] {
+  const pts: SpherePoint[] = [];
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (i / (count - 1)) * 2;
+    const r = Math.sqrt(Math.max(0, 1 - y * y));
+    const theta = golden * i;
+    const x = Math.cos(theta) * r;
+    const z = Math.sin(theta) * r;
 
-/* ── helpers ───────────────────────────────────────────────────────── */
+    const lat = Math.asin(y);
+    const lon = Math.atan2(z, x);
+    const n =
+      Math.sin(lat * 3.1 + 0.4) * Math.cos(lon * 4.2 - 0.6) +
+      Math.sin(lat * 5.3 - 1.1) * Math.cos(lon * 2.1 + 2.0) * 0.6 +
+      Math.sin(lon * 6.8 + lat * 2.4) * 0.35;
 
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+    const ice = Math.abs(lat) > 1.2;
+    const land = !ice && n > 0.18;
+    const edge = !ice && n > 0.1 && n <= 0.22; // coastline band, gets a distinct glyph
 
-function randomChar(): string {
-  const chars = "█▓▒░@#$%&*?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  return chars[Math.floor(Math.random() * chars.length)];
-}
-
-function generateStatic(width: number, height: number): string[][] {
-  const rows: string[][] = [];
-  for (let y = 0; y < height; y++) {
-    const row: string[] = [];
-    for (let x = 0; x < width; x++) {
-      row.push(Math.random() > 0.5 ? randomChar() : " ");
-    }
-    rows.push(row);
+    pts.push({ x, y, z, land, ice, edge });
   }
-  return rows;
+  return pts;
+}
+
+const LAND_RAMP = [" ", ".", ":", "+", "*", "%", "#", "@"];
+const OCEAN_RAMP = [" ", ".", "·", "~", "≈"];
+
+function lerpColor(a: string, b: string, t: number): string {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const ar = (pa >> 16) & 255, ag = (pa >> 8) & 255, ab = pa & 255;
+  const br = (pb >> 16) & 255, bg = (pb >> 8) & 255, bb = pb & 255;
+  const rr = Math.round(ar + (br - ar) * t);
+  const rg = Math.round(ag + (bg - ag) * t);
+  const rb = Math.round(ab + (bb - ab) * t);
+  return `rgb(${rr},${rg},${rb})`;
 }
 
 /* ── component ─────────────────────────────────────────────────────── */
@@ -79,20 +89,19 @@ export default function LoadingScreen({
   const [done, setDone] = useState(false);
   const [fading, setFading] = useState(false);
   const [isReduced, setIsReduced] = useState(false);
-
-  // screen state
-  const [screenContent, setScreenContent] = useState<string[]>([]);
-  const [glitchStyle, setGlitchStyle] = useState<React.CSSProperties>({});
-  const [staticNoise, setStaticNoise] = useState<string[][]>([]);
-  const [showStatic, setShowStatic] = useState(false);
-  const [brightness, setBrightness] = useState(1);
-  const [rgbSplit, setRgbSplit] = useState(false);
+  const [phase, setPhase] = useState<"globe" | "reveal">("globe");
   const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState<"power" | "memtest" | "happy" | "boot" | "reveal" | "done">("power");
+  const [statusIdx, setStatusIdx] = useState(0);
+  const [globeScale, setGlobeScale] = useState(1);
+  const [globeOpacity, setGlobeOpacity] = useState(1);
+  const [revealOpacity, setRevealOpacity] = useState(0);
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number>(0);
   const cancelledRef = useRef(false);
-  const screenContentRef = useRef<string[]>([]);
-  const scanlineRef = useRef<HTMLDivElement>(null);
+
+  const sphere = useMemo(() => buildSphere(4200), []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -102,501 +111,278 @@ export default function LoadingScreen({
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // glitch helper — displaces horizontal slices
-  const triggerGlitch = useCallback(async (duration = 200, intensity = 6) => {
-    if (cancelledRef.current || isReduced) return;
-    setRgbSplit(true);
+  /* draw a single frame of the globe onto the canvas at rotation angle */
+  const drawGlobe = useCallback(
+    (canvas: HTMLCanvasElement, angle: number) => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    setGlitchStyle({
-      filter: `brightness(${1 + Math.random() * 0.3})`,
-      transform: `translateX(${(Math.random() - 0.5) * intensity}px)`,
-    });
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssW = canvas.clientWidth;
+      const cssH = canvas.clientHeight;
+      if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
+        canvas.width = cssW * dpr;
+        canvas.height = cssH * dpr;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssW, cssH);
 
-    await sleep(duration * 0.3);
-    setGlitchStyle({
-      filter: `brightness(${0.7 + Math.random() * 0.2})`,
-      transform: `translateX(${(Math.random() - 0.5) * intensity * 1.5}px) skewX(${(Math.random() - 0.5) * 2}deg)`,
-    });
-    await sleep(duration * 0.3);
-    setGlitchStyle({
-      filter: `brightness(${1.1 + Math.random() * 0.15})`,
-      transform: `translateX(${(Math.random() - 0.5) * intensity * 0.5}px)`,
-    });
-    await sleep(duration * 0.4);
+      const fontSize = cssW < 420 ? 7 : 8.5;
+      const cellW = fontSize * 0.62;
+      const cellH = fontSize * 1.15;
+      const cols = Math.floor(cssW / cellW);
+      const rows = Math.floor(cssH / cellH);
 
-    setGlitchStyle({});
-    setRgbSplit(false);
-  }, [isReduced]);
+      // work in real pixels so the sphere projects as a true circle —
+      // cells aren't square, so scaling by column/row counts distorts it
+      const radiusPx = Math.min(cssW, cssH) * 0.42;
+      const centerPxX = cssW / 2;
+      const centerPxY = cssH / 2;
 
-  // static burst
-  const triggerStatic = useCallback(async (duration = 180) => {
-    if (cancelledRef.current || isReduced) return;
-    setStaticNoise(generateStatic(60, 12));
-    setShowStatic(true);
-    await sleep(duration);
-    setShowStatic(false);
-  }, [isReduced]);
+      // soft atmospheric glow behind the globe
+      const grad = ctx.createRadialGradient(
+        cssW / 2, cssH / 2, radiusPx * 0.85,
+        cssW / 2, cssH / 2, radiusPx * 1.7
+      );
+      grad.addColorStop(0, "rgba(28,95,121,0.18)");
+      grad.addColorStop(1, "rgba(4,5,9,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, cssW, cssH);
 
-  // scanline roll
-  const scanlineRoll = useCallback(async () => {
-    if (cancelledRef.current || isReduced || !scanlineRef.current) return;
-    const el = scanlineRef.current;
-    for (let y = -10; y <= 110; y += 3) {
-      if (cancelledRef.current) return;
-      el.style.top = `${y}%`;
-      el.style.opacity = "1";
-      await sleep(8);
-    }
-    el.style.opacity = "0";
-  }, [isReduced]);
+      const depthBuf = new Float32Array(cols * rows).fill(-Infinity);
+      const charBuf: (string | null)[] = new Array(cols * rows).fill(null);
+      const colorBuf: (string | null)[] = new Array(cols * rows).fill(null);
 
-  // ── main boot sequence ─────────────────────────────────────────────
+      const cosA = Math.cos(angle), sinA = Math.sin(angle);
+      const tilt = 0.42; // fixed axial tilt, radians
+      const cosT = Math.cos(tilt), sinT = Math.sin(tilt);
 
+      // light direction: warm, coming from upper-right, toward the viewer
+      const lx = 0.5, ly = 0.55, lz = 0.9;
+      const llen = Math.sqrt(lx * lx + ly * ly + lz * lz);
+      const LX = lx / llen, LY = ly / llen, LZ = lz / llen;
+
+      for (let i = 0; i < sphere.length; i++) {
+        const p = sphere[i];
+
+        // rotate around Y (spin)
+        let x = p.x * cosA + p.z * sinA;
+        let z = -p.x * sinA + p.z * cosA;
+        let y = p.y;
+
+        // fixed axial tilt around X
+        const ty = y * cosT - z * sinT;
+        const tz = y * sinT + z * cosT;
+        y = ty;
+        z = tz;
+
+        if (z < -0.05) continue; // backface cull
+
+        const pxX = centerPxX + x * radiusPx;
+        const pxY = centerPxY - y * radiusPx;
+        const col = Math.floor(pxX / cellW);
+        const row = Math.floor(pxY / cellH);
+        if (col < 0 || col >= cols || row < 0 || row >= rows) continue;
+
+        const idx = row * cols + col;
+        if (z <= depthBuf[idx]) continue;
+        depthBuf[idx] = z;
+
+        const brightness = Math.max(0, x * LX + y * LY + z * LZ);
+        let ch: string;
+        let color: string;
+
+        if (p.ice) {
+          const b = Math.min(1, brightness + 0.35);
+          ch = b > 0.6 ? "@" : "*";
+          color = lerpColor(COLORS.oceanMid, COLORS.ice, b);
+        } else if (p.edge) {
+          ch = "^";
+          color = lerpColor(COLORS.landDim, COLORS.accent, brightness);
+        } else if (p.land) {
+          const b = Math.min(LAND_RAMP.length - 1, Math.floor(brightness * LAND_RAMP.length));
+          ch = LAND_RAMP[b];
+          color =
+            brightness > 0.82
+              ? lerpColor(COLORS.landMid, COLORS.landBright, (brightness - 0.82) / 0.18)
+              : lerpColor(COLORS.landDim, COLORS.landMid, brightness / 0.82);
+        } else {
+          const b = Math.min(OCEAN_RAMP.length - 1, Math.floor(brightness * OCEAN_RAMP.length));
+          ch = OCEAN_RAMP[b];
+          color = lerpColor(COLORS.oceanDim, COLORS.oceanMid, brightness);
+        }
+
+        charBuf[idx] = ch;
+        colorBuf[idx] = color;
+      }
+
+      ctx.font = `${fontSize}px ui-monospace, "SF Mono", "JetBrains Mono", monospace`;
+      ctx.textBaseline = "top";
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const idx = row * cols + col;
+          const ch = charBuf[idx];
+          if (!ch || ch === " ") continue;
+          ctx.fillStyle = colorBuf[idx] as string;
+          ctx.fillText(ch, col * cellW, row * cellH);
+        }
+      }
+    },
+    [sphere]
+  );
+
+  /* main sequence: spin the globe, advance progress, then reveal */
   useEffect(() => {
     if (isReduced) {
-      // instant: show final state
-      screenContentRef.current = REVEAL_LINES;
-      setScreenContent([...REVEAL_LINES]);
       setPhase("reveal");
       setProgress(100);
-      setTimeout(() => {
+      setRevealOpacity(1);
+      setGlobeOpacity(0);
+      const t = setTimeout(() => {
         setFading(true);
         setTimeout(() => setDone(true), 500);
-      }, 600);
-      return;
+      }, 500);
+      return () => clearTimeout(t);
     }
 
-    let cancelled = false;
     cancelledRef.current = false;
+    const totalDuration = 3600;
+    const canvas = canvasRef.current;
 
-    // helper to update screen content via ref + state
-    const updateScreen = (lines: string[]) => {
-      screenContentRef.current = lines;
-      setScreenContent([...lines]);
+    startRef.current = performance.now();
+
+    const tick = (now: number) => {
+      if (cancelledRef.current) return;
+      const elapsed = now - startRef.current;
+      const t = Math.min(1, elapsed / totalDuration);
+
+      setProgress(Math.round(t * 100));
+      setStatusIdx(Math.min(STATUS_MESSAGES.length - 1, Math.floor(t * STATUS_MESSAGES.length)));
+
+      if (canvas) drawGlobe(canvas, elapsed * 0.00065);
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        beginReveal();
+      }
     };
 
-    async function boot() {
-      // ── PHASE 0: Power On ──
-      setPhase("power");
-      await sleep(200);
-      if (cancelled) return;
-
-      // CRT warm-up: scanline rolls down
-      await scanlineRoll();
-      if (cancelled) return;
-
-      // brightness flash
-      setBrightness(1.8);
-      await sleep(80);
-      setBrightness(1.2);
-      await sleep(60);
-      setBrightness(1);
-      await sleep(300);
-      if (cancelled) return;
-
-      // ── PHASE 1: Boot Logo + Memory Test ──
-      setPhase("memtest");
-      const logoLines = [...BOOT_LOGO, ""];
-      updateScreen(logoLines);
-      await sleep(400);
-      if (cancelled) return;
-
-      for (const line of MEMORY_CHECK_LINES) {
-        if (cancelled) return;
-        const current = [...screenContentRef.current];
-        current.push(line);
-        updateScreen(current);
-
-        // progress
-        const idx = MEMORY_CHECK_LINES.indexOf(line);
-        setProgress(Math.round(((idx + 1) / MEMORY_CHECK_LINES.length) * 40));
-
-        await sleep(180 + Math.random() * 120);
-
-        // micro-glitch on each check
-        if (idx < MEMORY_CHECK_LINES.length - 1) {
-          setGlitchStyle({ transform: `translateX(${(Math.random() - 0.5) * 3}px)` });
-          await sleep(40);
-          setGlitchStyle({});
-        }
-      }
-
-      setProgress(40);
-      await sleep(300);
-      if (cancelled) return;
-
-      // ── GLITCH 1→2 ──
-      await triggerStatic(150);
-      await triggerGlitch(250, 8);
-      if (cancelled) return;
-
-      // clear screen
-      updateScreen([]);
-      await sleep(200);
-      if (cancelled) return;
-
-      // ── PHASE 2: Happy Mac ASCII ──
-      setPhase("happy");
-      const macLines: string[] = ["", "  BOOTING PERSONALITY MODULE...", ""];
-      updateScreen([...macLines]);
-      await sleep(300);
-      if (cancelled) return;
-
-      // draw Happy Mac line by line with jitter
-      for (let i = 0; i < HAPPY_MAC.length; i++) {
-        if (cancelled) return;
-        const jitter = Math.random() > 0.7;
-        if (jitter) {
-          setGlitchStyle({ transform: `translateX(${(Math.random() - 0.5) * 2}px)` });
-          await sleep(25);
-          setGlitchStyle({});
-        }
-        macLines.push(HAPPY_MAC[i]);
-        updateScreen([...macLines]);
-        setProgress(40 + Math.round(((i + 1) / HAPPY_MAC.length) * 30));
-        await sleep(100 + Math.random() * 60);
-      }
-
-      // Happy Mac "blinks" — replace eyes briefly
-      await sleep(600);
-      if (cancelled) return;
-      const blinkMac = [...macLines];
-      blinkMac[macLines.length - 5] = "      |   -      -   |      ";
-      updateScreen([...blinkMac]);
-      await sleep(120);
-      updateScreen([...macLines]);
-      await sleep(400);
-      if (cancelled) return;
-
-      // ── GLITCH 2→3 ──
-      setBrightness(1.6);
-      await sleep(50);
-      setBrightness(0.6);
-      await sleep(40);
-      setBrightness(1);
-      await triggerGlitch(200, 10);
-      if (cancelled) return;
-
-      // clear
-      updateScreen([]);
-      await sleep(150);
-      if (cancelled) return;
-
-      // ── PHASE 3: System Boot ──
-      setPhase("boot");
-      const bootAccum: string[] = [];
-      for (const line of BOOT_LINES) {
-        if (cancelled) return;
-        // type the text
-        let current = "";
-        for (let i = 0; i < line.text.length; i++) {
-          if (cancelled) return;
-          current += line.text[i];
-          updateScreen([...bootAccum, current]);
-          await sleep(12 + Math.random() * 8);
-        }
-        // add checkmark with micro-glitch
-        setGlitchStyle({ transform: `translateX(${Math.random() * 2 - 1}px)` });
-        await sleep(30);
-        setGlitchStyle({});
-        bootAccum.push(line.text + "  ✓");
-        updateScreen([...bootAccum]);
-
-        const idx = BOOT_LINES.indexOf(line);
-        setProgress(70 + Math.round(((idx + 1) / BOOT_LINES.length) * 25));
-
-        await sleep(80 + Math.random() * 60);
-      }
-
-      setProgress(95);
-      await sleep(200);
-      if (cancelled) return;
-
-      // ── GLITCH 3→4 ──
-      await triggerStatic(120);
-      await triggerGlitch(180, 12);
-      if (cancelled) return;
-
-      updateScreen([]);
-      await sleep(150);
-      if (cancelled) return;
-
-      // ── PHASE 4: Reveal ──
+    async function beginReveal() {
+      await sleep(250);
+      if (cancelledRef.current) return;
       setPhase("reveal");
-      const revealAccum: string[] = [];
-      for (const line of REVEAL_LINES) {
-        if (cancelled) return;
-        revealAccum.push(line);
-        updateScreen([...revealAccum]);
-        await sleep(line === "" ? 60 : 100);
-      }
-      setProgress(100);
-
-      // final glow pulse
-      setBrightness(1.15);
+      setGlobeScale(1.6);
+      setGlobeOpacity(0);
       await sleep(150);
-      setBrightness(1);
-      await sleep(800);
-      if (cancelled) return;
-
-      // ── FADE OUT ──
+      if (cancelledRef.current) return;
+      setRevealOpacity(1);
+      await sleep(1100);
+      if (cancelledRef.current) return;
       setFading(true);
       await sleep(500);
-      if (cancelled) return;
+      if (cancelledRef.current) return;
       setDone(true);
     }
 
-    boot();
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      cancelled = true;
       cancelledRef.current = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [isReduced, scanlineRoll, triggerGlitch, triggerStatic]);
+  }, [isReduced, drawGlobe]);
 
   return (
     <>
       {children}
       {!done && (
         <div
-          className={`fixed inset-0 z-[999999] flex items-center justify-center bg-black transition-opacity duration-500 ${
+          className={`fixed inset-0 z-[999999] flex items-center justify-center transition-opacity duration-500 ${
             fading ? "opacity-0" : "opacity-100"
           }`}
+          style={{ background: COLORS.bg }}
         >
-          {/* CRT scanline overlay */}
+          {/* faint vignette to keep focus on the globe */}
           <div
-            className="pointer-events-none absolute inset-0 z-20"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.15) 1px, rgba(0,0,0,0.15) 2px)",
-              backgroundSize: "100% 2px",
-            }}
-          />
-
-          {/* vignette */}
-          <div
-            className="pointer-events-none absolute inset-0 z-20"
+            className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%)",
+                "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)",
             }}
           />
 
-          {/* roll scanline */}
-          <div
-            ref={scanlineRef}
-            className="pointer-events-none absolute left-0 right-0 z-30 h-[4px] opacity-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, transparent, rgba(16,185,129,0.4), rgba(255,255,255,0.15), transparent)",
-            }}
-          />
-
-          {/* main screen container */}
-          <div
-            className="relative z-10 w-full max-w-2xl px-6 transition-none"
-            style={{
-              filter: `brightness(${brightness})`,
-              transform: glitchStyle.transform as string || undefined,
-              ...glitchStyle,
-            }}
-          >
-            {/* RGB split layer (red channel) */}
-            {rgbSplit && (
-              <div
-                className="pointer-events-none absolute inset-0 z-30 opacity-30"
-                style={{
-                  color: "#ff0000",
-                  mixBlendMode: "screen",
-                  transform: "translateX(-2px)",
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: "0.8rem",
-                  lineHeight: "1.5",
-                  whiteSpace: "pre",
-                  overflow: "hidden",
-                }}
-              >
-                {screenContent.join("\n")}
-              </div>
-            )}
-
-            {/* RGB split layer (cyan channel) */}
-            {rgbSplit && (
-              <div
-                className="pointer-events-none absolute inset-0 z-30 opacity-30"
-                style={{
-                  color: "#00ffff",
-                  mixBlendMode: "screen",
-                  transform: "translateX(2px)",
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: "0.8rem",
-                  lineHeight: "1.5",
-                  whiteSpace: "pre",
-                  overflow: "hidden",
-                }}
-              >
-                {screenContent.join("\n")}
-              </div>
-            )}
-
-            {/* static noise overlay */}
-            {showStatic && (
-              <div
-                className="pointer-events-none absolute inset-0 z-40 overflow-hidden"
-                style={{ fontFamily: "var(--font-mono), monospace" }}
-              >
-                {staticNoise.map((row, y) => (
-                  <div
-                    key={y}
-                    className="text-[8px] leading-[10px] text-emerald-500/60 whitespace-pre"
-                  >
-                    {row.join("")}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* logo header */}
-            {(phase === "power" || phase === "memtest") && screenContent.length > 0 && (
-              <div className="mb-2">
-                {BOOT_LOGO.map((line, i) => (
-                  <div
-                    key={i}
-                    className="text-[10px] sm:text-xs text-emerald-600/40 leading-tight whitespace-pre"
-                    style={{ fontFamily: "var(--font-mono), monospace" }}
-                  >
-                    {line}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* main content */}
+          <div className="relative z-10 flex w-full max-w-md flex-col items-center px-6">
+            {/* globe canvas */}
             <div
-              className="min-h-[300px] sm:min-h-[360px]"
-              style={{ fontFamily: "var(--font-mono), monospace" }}
+              className="relative h-[240px] w-full sm:h-[300px] transition-all duration-500 ease-out"
+              style={{
+                transform: `scale(${globeScale})`,
+                opacity: globeOpacity,
+              }}
             >
-              {phase === "memtest" && screenContent.length > BOOT_LOGO.length + 1 && (
-                <div className="mt-2">
-                  {screenContent.slice(BOOT_LOGO.length + 1).map((line, i) => (
-                    <div
-                      key={i}
-                      className="text-xs sm:text-sm leading-relaxed"
-                      style={{
-                        color: line.includes("OK") || line.includes("DETECTED") || line.includes("ONLINE")
-                          ? "#10b981"
-                          : "#6ee7b7",
-                        textShadow: "0 0 8px rgba(16,185,129,0.4)",
-                      }}
-                    >
-                      {line}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {phase === "happy" && (
-                <div className="mt-1">
-                  {screenContent.map((line, i) => {
-                    const isAscii = i >= 1 && i <= 7;
-                    const isLabel = i === 0 || i === 8;
-                    return (
-                      <div
-                        key={i}
-                        className={`leading-relaxed whitespace-pre ${
-                          isAscii
-                            ? "text-sm sm:text-base text-emerald-300"
-                            : isLabel
-                              ? "text-xs text-emerald-500/70"
-                              : "text-xs text-emerald-400"
-                        }`}
-                        style={{
-                          textShadow: isAscii
-                            ? "0 0 10px rgba(16,185,129,0.5)"
-                            : "0 0 6px rgba(16,185,129,0.3)",
-                        }}
-                      >
-                        {line}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {phase === "boot" && (
-                <div className="mt-1">
-                  {screenContent.map((line, i) => (
-                    <div
-                      key={i}
-                      className="text-xs sm:text-sm leading-relaxed"
-                      style={{
-                        color: line.includes("✓") ? "#10b981" : "#6ee7b7",
-                        textShadow: "0 0 6px rgba(16,185,129,0.3)",
-                      }}
-                    >
-                      {line}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {phase === "reveal" && (
-                <div className="mt-2 text-center">
-                  {screenContent.map((line, i) => {
-                    const isName = line.includes("ESHAN");
-                    const isRole = line.includes("ML Engineer");
-                    const isBorder = line.includes("━");
-                    return (
-                      <div
-                        key={i}
-                        className={`whitespace-pre ${
-                          isBorder
-                            ? "text-emerald-500/30 text-xs"
-                            : isName
-                              ? "text-lg sm:text-2xl font-bold text-emerald-400 tracking-[0.15em]"
-                              : isRole
-                                ? "text-xs sm:text-sm text-emerald-500/70 tracking-[0.2em] mt-1"
-                                : "text-emerald-400"
-                        }`}
-                        style={{
-                          textShadow: isName
-                            ? "0 0 20px rgba(16,185,129,0.6), 0 0 40px rgba(16,185,129,0.3)"
-                            : "0 0 8px rgba(16,185,129,0.3)",
-                        }}
-                      >
-                        {line}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* blinking cursor */}
-              {!isReduced && phase !== "reveal" && (
-                <span className="inline-block w-[8px] h-[14px] bg-emerald-400 animate-pulse mt-1 ml-1 align-middle" />
-              )}
+              <canvas ref={canvasRef} className="h-full w-full" />
             </div>
 
-            {/* progress bar */}
-            <div className="mt-4 h-[3px] w-full rounded-full bg-emerald-900/30 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-300"
+            {/* name reveal, fades in as globe fades out */}
+            <div
+              className="absolute flex flex-col items-center text-center transition-opacity duration-700"
+              style={{ opacity: revealOpacity }}
+            >
+              <span
+                className="text-lg sm:text-2xl font-semibold tracking-[0.18em]"
                 style={{
-                  width: `${progress}%`,
-                  background: "linear-gradient(90deg, #059669, #10b981, #6ee7b7)",
-                  boxShadow: "0 0 10px rgba(16,185,129,0.5)",
+                  color: COLORS.landBright,
+                  fontFamily: "ui-sans-serif, system-ui, sans-serif",
+                  textShadow: `0 0 24px ${COLORS.accent}55`,
                 }}
-              />
+              >
+                {NAME}
+              </span>
+              <span
+                className="mt-2 text-[10px] sm:text-xs tracking-[0.25em]"
+                style={{ color: COLORS.textDim }}
+              >
+                {ROLE}
+              </span>
             </div>
 
-            {/* bottom status */}
-            <div className="mt-3 flex items-center justify-between text-[10px] text-emerald-600/30" style={{ fontFamily: "var(--font-mono), monospace" }}>
-              <span className="animate-pulse">■</span>
-              <span>SESSION — PORTFOLIO v2</span>
+            {/* progress + status, hidden during reveal */}
+            <div
+              className="mt-6 w-full transition-opacity duration-300"
+              style={{ opacity: phase === "globe" ? 1 : 0 }}
+            >
+              <div
+                className="h-[2px] w-full overflow-hidden rounded-full"
+                style={{ background: "rgba(255,255,255,0.06)" }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-150"
+                  style={{
+                    width: `${progress}%`,
+                    background: `linear-gradient(90deg, ${COLORS.oceanMid}, ${COLORS.accent})`,
+                    boxShadow: `0 0 8px ${COLORS.accent}66`,
+                  }}
+                />
+              </div>
+              <div
+                className="mt-3 flex items-center justify-between text-[10px] tracking-[0.15em]"
+                style={{
+                  color: COLORS.textDim,
+                  fontFamily: "ui-monospace, monospace",
+                }}
+              >
+                <span>{STATUS_MESSAGES[statusIdx]}…</span>
+                <span style={{ color: COLORS.accent }}>{progress.toString().padStart(3, "0")}%</span>
+              </div>
             </div>
           </div>
         </div>
       )}
     </>
   );
+}
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
 }

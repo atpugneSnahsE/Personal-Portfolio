@@ -48,7 +48,7 @@ export default async function Projects() {
                   sm:max-w-[380px]
                   md:min-w-[420px]
                   md:max-w-[420px]
-                  min-h-[300px]
+                  min-h-[260px]
                   sm:min-h-[380px]
                   md:min-h-[420px]
                   snap-center

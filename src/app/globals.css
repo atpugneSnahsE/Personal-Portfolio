@@ -25,6 +25,23 @@ html {
 
 body {
   min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Prevent horizontal overflow on small screens */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch-friendly: remove tap delay */
+@media (pointer: coarse) {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
 }
 
 /* Forest Mode */

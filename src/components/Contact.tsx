@@ -34,8 +34,8 @@ export default function Contact() {
             dark:bg-[#0B0C0E]
           "
         >
-          <div className="mb-6 sm:mb-8">
-            <h3 className="mb-3 text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-white">
+          <div className="mb-5 sm:mb-8">
+            <h3 className="mb-2 sm:mb-3 text-xl sm:text-3xl font-semibold text-zinc-900 dark:text-white">
               Let’s build something useful
             </h3>
 
@@ -46,7 +46,7 @@ export default function Contact() {
             </p>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-3 sm:space-y-5">
             <a
               href="mailto:eshansengupta2000@gmail.com"
               className="

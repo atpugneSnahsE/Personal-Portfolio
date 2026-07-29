@@ -18,15 +18,15 @@ export default function Section({
         max-w-7xl
         px-6
         md:px-8
-        py-14
+        py-10
         md:py-16
       "
     >
       {title && (
-        <div className="mb-8 md:mb-10">
+        <div className="mb-6 md:mb-10">
           <h2
             className="
-              text-3xl
+              text-2xl sm:text-3xl
               font-bold
               tracking-[var(--tracking-heading)]
               text-zinc-900

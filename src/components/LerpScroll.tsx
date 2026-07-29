@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useReducedMotion } from "framer-motion";
 
 const lerp = (current: number, target: number, factor: number) =>
@@ -15,6 +15,15 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
   const animateRef = useRef<() => void>(() => {});
   const progressBarRef = useRef<HTMLDivElement>(null);
   const shouldReduce = useReducedMotion();
+  const isTouch = useSyncExternalStore(
+    (cb) => {
+      const mq = matchMedia("(pointer: coarse)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => matchMedia("(pointer: coarse)").matches,
+    () => false,
+  );
 
   function getMax() {
     if (!contentRef.current) return 0;
@@ -58,7 +67,12 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
   });
 
   useEffect(() => {
-    if (shouldReduce) return;
+    if (shouldReduce || isTouch) {
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+      document.body.style.touchAction = "";
+      return;
+    }
 
     const max = getMax();
     targetY.current = Math.min(targetY.current, max);
@@ -148,7 +162,11 @@ export default function LerpScroll({ children }: { children: React.ReactNode }) 
         rafId.current = null;
       }
     };
-  }, [shouldReduce]);
+  }, [shouldReduce, isTouch]);
+
+  if (shouldReduce || isTouch) {
+    return <>{children}</>;
+  }
 
   return (
     <>

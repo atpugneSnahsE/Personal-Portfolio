@@ -129,7 +129,7 @@ function TimelineCard({
 export default function Timeline() {
   return (
     <Section title="Research & Experience">
-      <div className="grid gap-10 md:gap-14 lg:grid-cols-[1fr_auto_1fr]">
+      <div className="grid gap-8 md:gap-14 lg:grid-cols-[1fr_auto_1fr]">
 
         {/* Academic */}
         <div>

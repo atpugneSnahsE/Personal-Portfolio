@@ -23,16 +23,17 @@ export default function Header() {
         <a
           href="/"
           className="
-            flex items-center
+            text-lg sm:text-xl md:text-2xl
+            font-bold
+            tracking-wide
+            text-zinc-900
+            dark:text-white
             transition
-            hover:opacity-80
+            hover:opacity-70
           "
+          style={{ fontFamily: "var(--font-display), serif" }}
         >
-          <img
-            src="/header.png"
-            alt="Eshan Sengupta Logo"
-            className="h-8 w-auto object-contain"
-          />
+          ES
         </a>
 
         {/* Right Controls */}
