@@ -1,4 +1,4 @@
-import * as anime from 'animejs';
+import { animate, stagger } from 'animejs';
 
 export const animateOnScroll = (selector: string, animation: any) => {
   const elements = document.querySelectorAll(selector);
@@ -6,8 +6,7 @@ export const animateOnScroll = (selector: string, animation: any) => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        anime({
-          targets: entry.target,
+        animate(entry.target, {
           ...animation,
           duration: 800,
           easing: 'easeOutQuad',
@@ -27,13 +26,12 @@ export const animateStatNumbers = (selector: string) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting && entry.target.textContent?.match(/^\d+/)) {
         const finalValue = parseInt(entry.target.textContent || '0');
-        anime({
-          targets: entry.target,
+        animate(entry.target, {
           innerHTML: [0, finalValue],
           round: 1,
           duration: 2000,
           easing: 'easeOutExpo',
-          update(anim) {
+          update(anim: any) {
             (entry.target as HTMLElement).textContent = Math.floor(anim.progress * finalValue) + '+';
           }
         });
@@ -51,12 +49,12 @@ export const staggerAnimation = (selector: string, delay: number = 50) => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        anime.stagger(delay, {
-          targets: elements,
+        animate(elements, {
           opacity: [0, 1],
           translateY: [20, 0],
           duration: 600,
           easing: 'easeOutQuad',
+          delay: stagger(delay),
         });
         observer.unobserve(entry.target);
       }
@@ -71,8 +69,7 @@ export const hoverScaleAnimation = (selector: string) => {
 
   elements.forEach((el) => {
     el.addEventListener('mouseenter', () => {
-      anime({
-        targets: el,
+      animate(el, {
         scale: 1.05,
         duration: 300,
         easing: 'easeOutQuad',
@@ -80,8 +77,7 @@ export const hoverScaleAnimation = (selector: string) => {
     });
 
     el.addEventListener('mouseleave', () => {
-      anime({
-        targets: el,
+      animate(el, {
         scale: 1,
         duration: 300,
         easing: 'easeOutQuad',
