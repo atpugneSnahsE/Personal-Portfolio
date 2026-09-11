@@ -5,7 +5,6 @@ import { Providers } from "@/components/ThemeProvider";
 import ForestBackground from "@/components/ForestBackground";
 import Header from "@/components/Header";
 import CustomCursor from "@/components/CustomCursor";
-import LoadingScreen from "@/components/LoadingScreen";
 import LerpScroll from "@/components/LerpScroll";
 import Chatbot from "@/components/Chatbot/Chatbot";
 
@@ -46,15 +45,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${cinzel.variable}`}>
       <body suppressHydrationWarning>
         <Providers>
-          <LoadingScreen>
-            <ForestBackground />
-            <CustomCursor />
-            <Header />
-            <LerpScroll>
-              {children}
-            </LerpScroll>
-            <Chatbot />
-          </LoadingScreen>
+          <ForestBackground />
+          <CustomCursor />
+          <Header />
+          <LerpScroll>
+            {children}
+          </LerpScroll>
+          <Chatbot />
         </Providers>
       </body>
     </html>

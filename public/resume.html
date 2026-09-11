@@ -13,9 +13,9 @@
   --bg: #ffffff;
   --text: #09090b;
   --muted: #52525b;
-  --accent: #10b981;
+  --accent: #000000;
   --rule: #e4e4e7;
-  --dot-yellow: #10b981;
+  --dot-yellow: #000000;
 }
 
 * {
@@ -69,7 +69,7 @@ body {
 }
 
 .download:hover {
-  background: #059669;
+  background: #1a1a1a;
   transform: translateY(-2px);
 }
 
@@ -102,19 +102,7 @@ body {
   font-size: 3rem;
   font-weight: 700;
   letter-spacing: -1px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
   margin-bottom: 12px;
-}
-
-.name::before {
-  content: "";
-  width: 24px;
-  height: 24px;
-  background: var(--dot-yellow);
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .title {
@@ -162,19 +150,9 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   margin-bottom: 20px;
 }
 
-.section-title::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-}
 
 /* Experience Items */
 .exp-item {
@@ -295,28 +273,37 @@ body {
   top: 24px;
   right: 24px;
   z-index: 1000;
-  width: 48px;
-  height: 48px;
   display: flex;
+  gap: 12px;
   align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  border: 1px solid var(--rule);
-  border-radius: 50%;
+  background: transparent;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: all 0.25s ease;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-}
-
-.theme-toggle svg {
-  width: 22px;
-  height: 22px;
+.theme-toggle span {
   color: var(--text);
+  transition: color 0.25s ease;
+}
+
+.theme-toggle span.separator {
+  color: var(--muted);
+}
+
+.theme-toggle span.inactive {
+  color: var(--muted);
+}
+
+.theme-toggle:hover span.inactive {
+  color: #09090b;
+}
+
+.dark-theme .theme-toggle:hover span.inactive {
+  color: #fafafa;
 }
 
 /* Dark Theme */
@@ -338,31 +325,6 @@ body {
   color: #fff;
 }
 
-/* Custom Cursor */
-.custom-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, opacity 0.3s ease;
-  z-index: 9999;
-  background: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 0 12px 6px rgba(16, 185, 129, 0.2);
-  opacity: 0;
-}
-
-.custom-cursor.moving {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.5);
-}
-
-.has-custom-cursor {
-  cursor: none;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -412,13 +374,10 @@ body {
 
 <!-- Theme Toggle Button -->
 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2M12 19v2M4.22 4.22l1.4 1.4M18.36 18.36l1.4 1.4M1 12h2M21 12h2M4.22 19.78l1.4-1.4M18.36 5.64l1.4-1.4M12 7a5 5 0 100 10 5 5 0 000-10z"/>
-  </svg>
+  <span id="lightLabel">Light</span>
+  <span class="separator">/</span>
+  <span id="darkLabel" class="inactive">Dark</span>
 </button>
-
-<!-- Custom Cursor -->
-<div class="custom-cursor" aria-hidden="true"></div>
 
 <div class="wrapper">
 
@@ -618,54 +577,30 @@ body {
 <script>
   // Theme Toggle
   const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = document.getElementById('themeIcon');
+  const lightLabel = document.getElementById('lightLabel');
+  const darkLabel = document.getElementById('darkLabel');
   const savedTheme = localStorage.getItem('theme') || 'light';
-  
+
+  function updateThemeUI(isDark) {
+    if (isDark) {
+      darkLabel.classList.remove('inactive');
+      lightLabel.classList.add('inactive');
+    } else {
+      lightLabel.classList.remove('inactive');
+      darkLabel.classList.add('inactive');
+    }
+  }
+
   if (savedTheme === 'dark') {
     document.documentElement.classList.add('dark-theme');
-    themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>';
+    updateThemeUI(true);
   }
-  
+
   themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.classList.toggle('dark-theme');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    
-    if (isDark) {
-      themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>';
-    } else {
-      themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v2M12 19v2M4.22 4.22l1.4 1.4M18.36 18.36l1.4 1.4M1 12h2M21 12h2M4.22 19.78l1.4-1.4M18.36 5.64l1.4-1.4M12 7a5 5 0 100 10 5 5 0 000-10z"/>';
-    }
+    updateThemeUI(isDark);
   });
-
-  // Custom Cursor
-  if (!('ontouchstart' in window)) {
-    const cursor = document.querySelector('.custom-cursor');
-    let mouseX = 0, mouseY = 0;
-    let cursorX = 0, cursorY = 0;
-    let idleTimer;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursor.classList.add('moving');
-      
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => {
-        cursor.classList.remove('moving');
-      }, 150);
-    });
-
-    function animateCursor() {
-      cursorX += (mouseX - cursorX) * 0.15;
-      cursorY += (mouseY - cursorY) * 0.15;
-      cursor.style.left = cursorX + 'px';
-      cursor.style.top = cursorY + 'px';
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-    
-    document.body.classList.add('has-custom-cursor');
-  }
 </script>
 
 </body>

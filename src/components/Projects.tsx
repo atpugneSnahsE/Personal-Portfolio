@@ -1,200 +1,75 @@
-import Section from "./Section";
 import { getGithubProjects } from "@/lib/github";
+import FadeIn from "./FadeIn";
 
 export default async function Projects() {
   const projects = await getGithubProjects();
 
   return (
-    <Section title="Projects">
-      <div className="mb-10 flex flex-wrap items-center gap-3">
-        <span className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-black">
-          GitHub: atpugneSnahsE
-        </span>
+    <section className="w-full bg-white dark:bg-black py-24 md:py-32 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="mx-auto max-w-7xl px-6 md:px-12">
+        {/* Section Title */}
+        <FadeIn>
+          <h2 className="text-6xl md:text-7xl font-bold text-black dark:text-white mb-20">
+            BUILT
+            <br />
+            PROJECTS
+          </h2>
+        </FadeIn>
 
-        <span className="rounded-full border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700">
-          {projects.length} Projects
-        </span>
-      </div>
-
-      {/* Prevent hover cut-off */}
-      <div className="overflow-visible pt-6">
-        <div
-          className="
-            flex
-            gap-6
-            overflow-x-auto
-            overflow-y-visible
-            scroll-smooth
-            py-4
-            pb-8
-            snap-x
-            snap-mandatory
-            items-stretch
-
-            scrollbar-thin
-            scrollbar-thumb-zinc-700
-            scrollbar-track-transparent
-          "
-        >
-          {projects.map(
-            (project: any, index: number) => (
-              <div
-                key={index}
-                className="
-                  group
-                  min-w-[80vw]
-                  max-w-[80vw]
-                  sm:min-w-[380px]
-                  sm:max-w-[380px]
-                  md:min-w-[420px]
-                  md:max-w-[420px]
-                  min-h-[260px]
-                  sm:min-h-[380px]
-                  md:min-h-[420px]
-                  snap-center
-
-                  flex
-                  flex-col
-                  justify-between
-
-                  rounded-2xl sm:rounded-[2rem]
-                  border
-                  p-5 sm:p-6 md:p-8
-                  transition-colors
-                  will-change-transform
-
-                  border-zinc-200
-                  bg-white/70
-                  press-scale
-                  hover:border-emerald-500/40
-                  hover:shadow-2xl
-
-                  dark:border-zinc-800
-                  dark:bg-[#0B0C0E]
-                "
+        {/* Projects Grid - Clean list without placeholders */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-12">
+          {projects.slice(0, 6).map((project: any, index: number) => (
+            <FadeIn key={index} delay={index * 0.08}>
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group pb-6 border-b border-zinc-300 dark:border-zinc-700 hover:opacity-70 transition-opacity"
               >
-                {/* Top content */}
-                <div>
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <h3
-                        className="
-                          text-2xl
-                          font-semibold
-                          text-zinc-900
-                          dark:text-white
-                        "
-                      >
-                        {project.name}
-                      </h3>
-                    </div>
-
-                    <span className="whitespace-nowrap rounded-full bg-emerald-500/10 px-3 py-1 text-sm text-emerald-500">
+                <h3 className="text-2xl font-bold text-black dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  {project.name}
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                  {project.description || "Open source project"}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {project.language && (
+                    <span className="text-xs font-bold px-3 py-1 bg-black dark:bg-white text-white dark:text-black rounded">
+                      {project.language}
+                    </span>
+                  )}
+                  {project.stars > 0 && (
+                    <span className="text-xs px-3 py-1 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded">
                       ★ {project.stars}
                     </span>
-                  </div>
-
-                  <p
-                    className="
-                      mb-6
-                      min-h-[90px]
-                      leading-7
-                      text-zinc-600
-                      dark:text-zinc-400
-                    "
-                  >
-                    {project.description ||
-                      "No description available."}
-                  </p>
-
-                  <div className="mb-6 flex flex-wrap gap-2">
-                    {project.language && (
-                      <span
-                        className="
-                          rounded-full
-                          border
-                          px-4 py-2
-                          text-sm
-
-                          border-zinc-300
-                          text-zinc-700
-
-                          dark:border-zinc-700
-                          dark:text-zinc-300
-                        "
-                      >
-                        {project.language}
-                      </span>
-                    )}
-
-                    {project.topics
-                      ?.slice(0, 3)
-                      .map((topic: string) => (
-                        <span
-                          key={topic}
-                          className="
-                            rounded-full
-                            bg-zinc-200
-                            px-3 py-2
-                            text-xs
-
-                            dark:bg-zinc-800
-                          "
-                        >
-                          {topic}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-
-                {/* Bottom buttons */}
-                <div className="flex gap-3 pt-4">
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="
-                      rounded-xl
-                      bg-emerald-500
-                      px-5 py-3
-                      text-sm
-                      font-medium
-                      text-black
-                      press-scale
-                      transition-transform
-                    "
-                  >
-                    GitHub
-                  </a>
-
-                  {project.homepage && (
-                    <a
-                      href={project.homepage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="
-                        rounded-xl
-                        border
-                        px-5 py-3
-                        text-sm
-                        press-scale
-                        transition-colors
-
-                        border-zinc-300
-                        hover:border-emerald-500
-
-                        dark:border-zinc-700
-                      "
-                    >
-                      Live Demo
-                    </a>
                   )}
+                  {project.topics?.slice(0, 2).map((topic: string) => (
+                    <span key={topic} className="text-xs px-3 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 rounded">
+                      {topic}
+                    </span>
+                  ))}
                 </div>
-              </div>
-            )
-          )}
+              </a>
+            </FadeIn>
+          ))}
         </div>
+
+        {/* View All Button */}
+        {projects.length > 6 && (
+          <FadeIn delay={0.5}>
+            <div className="pt-8">
+              <a
+                href="https://github.com/atpugneSnahsE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-bold uppercase tracking-wider text-sm hover:opacity-80 transition-opacity"
+              >
+                View More Projects
+              </a>
+            </div>
+          </FadeIn>
+        )}
       </div>
-    </Section>
+    </section>
   );
 }

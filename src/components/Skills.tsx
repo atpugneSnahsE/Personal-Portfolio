@@ -1,165 +1,53 @@
-import Section from "./Section";
 import FadeIn from "./FadeIn";
 
-const skillGroups = [
+const areas = [
   {
     title: "AI & Machine Learning",
-    skills: [
-      "Machine Learning",
-      "PyTorch",
-      "Scikit-learn",
-      "NumPy",
-      "Pandas",
-      "Time Series Forecasting",
-      "Computer Vision",
-      "Object Detection",
-      "Deep Learning",
-      "NLP Fundamentals",
-      "GenAI",
-      "Machine Learning Pipelines",
-    ],
+    description: "Deep expertise in neural networks, PyTorch, TensorFlow, and modern deep learning frameworks. Specialized in computer vision and object detection systems.",
   },
   {
-    title: "Data Science & Analytics",
-    skills: [
-      "Statistical Analysis",
-      "Exploratory Data Analysis",
-      "Data Cleaning",
-      "Data Visualization",
-      "KPI Analysis",
-      "Power BI",
-      "Dashboarding",
-      "Tableau Concepts",
-      "Systematized Reporting",
-      "Predictive Analytics",
-    ],
+    title: "Computer Vision Systems",
+    description: "Building advanced computer vision solutions including LiDAR perception, autonomous systems, and real-time image processing applications.",
   },
   {
-    title: "Programming & Data Technologies",
-    skills: [
-      "Python",
-      "SQL",
-      "PL/SQL",
-      "Oracle APEX",
-      "Database Management",
-      "REST APIs",
-      "Git",
-      "Java",
-      "MATLAB",
-    ],
+    title: "Research & Development",
+    description: "Academic publishing, quantitative research, signal processing, and mathematical modeling for complex AI systems and autonomous platforms.",
   },
   {
-    title: "Research & Engineering",
-    skills: [
-      "Quantitative Research",
-      "Academic Publishing",
-      "Literature Review",
-      "Signal Processing",
-      "LiDAR Systems",
-      "Autonomous Systems",
-      "Real-Time Systems",
-      "Mathematical Modeling",
-      "Cybersecurity",
-    ],
-  },
-  {
-    title: "Business & Systems",
-    skills: [
-      "Business Process Mapping",
-      "BPMN 2.0",
-      "Requirements Elicitation",
-      "Gap Analysis",
-      "Stakeholder Management",
-      "UAT Execution",
-      "Agile Scrum",
-      "SDLC",
-      "Jira",
-      "Oracle EBS",
-      "Azure DevOps",
-    ],
+    title: "Full-Stack Engineering",
+    description: "End-to-end development using Python, Java, SQL, REST APIs, and modern software engineering practices. Production-ready systems.",
   },
 ];
 
 export default function Skills() {
   return (
-    <Section title="Technical Expertise">
-      <div className="grid gap-8 lg:grid-cols-2">
-        {skillGroups.map(
-          (group, index) => (
-            <FadeIn
-              key={group.title}
-              delay={index * 0.08}
-            >
-              <div
-                className="
-                  group
-                  rounded-2xl sm:rounded-[2rem]
-                  border
-                  p-6 sm:p-8
-                  backdrop-blur-xl
-                  transition-colors
+    <section className="w-full bg-zinc-50/50 dark:bg-zinc-950/50 py-24 md:py-32 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="mx-auto max-w-7xl px-6 md:px-12">
+        {/* Section Title */}
+        <FadeIn>
+          <h2 className="text-6xl md:text-7xl font-bold text-black dark:text-white mb-20">
+            RESEARCH &
+            <br />
+            DEVELOPMENT AREAS
+          </h2>
+        </FadeIn>
 
-                  border-zinc-200
-                  bg-white/60
-                  hover:border-emerald-500/30
-                  hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]
-
-                  dark:border-zinc-800
-                  dark:bg-[#0B0C0E]/80
-                  dark:hover:border-emerald-500/40
-                "
-              >
-                <div className="mb-6 flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
-
-                  <h3
-                    className="
-                      text-xl
-                      font-semibold
-                      text-zinc-900
-                      dark:text-white
-                    "
-                  >
-                    {group.title}
-                  </h3>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  {group.skills.map(
-                    (skill) => (
-                      <span
-                        key={skill}
-                        className="
-                          rounded-full
-                          border
-                          px-4
-                          py-2
-                          text-sm
-                          transition-colors
-
-                          border-zinc-300
-                          bg-white/80
-                          text-zinc-700
-                          press-scale
-                          hover:border-emerald-500
-                          hover:text-emerald-600
-
-                          dark:border-zinc-700
-                          dark:bg-zinc-900
-                          dark:text-zinc-300
-                          dark:hover:text-emerald-400
-                        "
-                      >
-                        {skill}
-                      </span>
-                    )
-                  )}
-                </div>
+        {/* Development Areas Grid - 2 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+          {areas.map((area, index) => (
+            <FadeIn key={area.title} delay={index * 0.1}>
+              <div className="space-y-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-black dark:text-white">
+                  {area.title}
+                </h3>
+                <p className="text-base md:text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed font-light">
+                  {area.description}
+                </p>
               </div>
             </FadeIn>
-          )
-        )}
+          ))}
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }

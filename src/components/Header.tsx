@@ -1,45 +1,37 @@
 "use client";
 
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
-  return (
-    <header
-      className="
-        fixed top-0 z-50 w-full
-        border-b
-        border-zinc-200/40
-        bg-white/70
-        backdrop-blur-2xl
-        dark:border-zinc-900/50
-        dark:bg-black/40
-        animate-[slideDown_0.5s_var(--ease-out)_both]
-      "
-      style={{ borderTop: "1px solid rgba(255, 255, 255, 0.4)" }}
-    >
-      <div className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-6 md:px-8">
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-        {/* Logo */}
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const logoImage = mounted && theme === "dark" ? "/profile-blk.png" : "/profile.png";
+
+  return (
+    <header className="fixed top-0 z-50 w-full border-b border-zinc-300 dark:border-zinc-700 bg-white dark:bg-black">
+      <div className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-6 md:px-12">
+        {/* Logo - Profile Image */}
         <a
           href="/"
-          className="
-            text-lg sm:text-xl md:text-2xl
-            font-bold
-            tracking-wide
-            text-zinc-900
-            dark:text-white
-            transition
-            hover:opacity-70
-          "
-          style={{ fontFamily: "var(--font-display), serif" }}
+          className="w-10 h-10 hover:opacity-70 transition-opacity flex items-center justify-center"
         >
-          ES
+          <img
+            src={logoImage}
+            alt="Logo"
+            className="w-8 h-8 object-contain rounded-full transition-opacity duration-300"
+          />
         </a>
 
+
         {/* Right Controls */}
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-        </div>
+        <ThemeToggle />
       </div>
     </header>
   );
